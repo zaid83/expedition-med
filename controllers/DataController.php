@@ -19,6 +19,7 @@ class DataController
   public function sampling()
   {
     $this->user->checkConnexion($_SESSION["id"]);
+    $seas = $this->data->findAllSeas();
     $pageTitle = "Sampling";
     $page = "views/AddSampling.phtml";
     require_once "views/Layout.phtml";
@@ -61,6 +62,9 @@ class DataController
     $this->data->formulairePrelevement();
     return header('Location: /expedition-med/Data/tri');
   }
+
+
+
   public function detailBySample($id)
   {
     $resultT = $this->data->findTypeBySample($id);

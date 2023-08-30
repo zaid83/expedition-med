@@ -182,4 +182,11 @@ class DataRepository
         $select = $this->pdo->query("SELECT Distinct SUBSTRING(date, -4) FROM prelevements ");
         return $select->fetchAll(PDO::FETCH_COLUMN);
     }
+
+    public function findAllSeas()
+    {
+        $select = $this->pdo->prepare("SELECT id_sea, name from mers");
+        $select->execute();
+        return $select->fetchAll();
+    }
 }

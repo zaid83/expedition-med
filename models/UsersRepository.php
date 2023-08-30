@@ -61,7 +61,6 @@ class UsersRepository
 
     public function check($column, $params)
     {
-
         $compare = $this->pdo->prepare('SELECT ' . $column . ' FROM user WHERE ' . $column . ' = ?');
         $compare->execute([$params]);
         $res = $compare->fetchAll();
