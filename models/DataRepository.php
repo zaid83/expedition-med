@@ -200,4 +200,17 @@ class DataRepository
         $select->execute();
         return $select->fetchAll();
     }
+
+    public function findSizeByTri()
+    {
+        $select = $this->pdo->prepare("SELECT DISTINCT Size from tri");
+        $select->execute();
+        return $select->fetchAll();
+    }
+    public function findColorByTri()
+    {
+        $select = $this->pdo->prepare("SELECT DISTINCT Color from tri");
+        $select->execute();
+        return $select->fetchAll();
+    }
 }

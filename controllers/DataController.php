@@ -40,8 +40,13 @@ class DataController
   public function select()
   {
     $this->user->checkConnexion($_SESSION["id"]);
-    $result = $this->data->findAllSample();
-    echo json_encode($result);
+
+    $data = array();
+    $data['samples'] = $this->data->findAllSample();
+    $data['type'] = $this->data->findTypeByTri();
+    $data['size'] = $this->data->findSizeByTri();
+    $data['color'] = $this->data->findColorByTri();
+    echo json_encode($data);
   }
   public function triPost()
   {
