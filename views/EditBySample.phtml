@@ -6,7 +6,12 @@
     </div>
     <div class="mb-3 w-25 w-25">
         <label for="Sea" class="form-label">Mer</label>
-        <input type="text" class="form-control w-75" id="Sea" name="sea" value="<?= $prelevement["Sea"] ?>">
+        <select name="sea" id="select-seas" class="select-seas form-control w-75">
+            <option value=""><?= $prelevement["Sea"] ?></option>
+            <?php foreach ($seas as $sea) : ?>
+                <option value="<?= $sea['id_sea'] ?>"><?= $sea['name'] ?></option>
+            <?php endforeach; ?>
+        </select>
 
     </div>
     <div class="mb-3 w-25 w-25">
