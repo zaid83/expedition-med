@@ -67,8 +67,10 @@ class DataRepository
 
     public function editBySample($id, $post)
     {
-        $insert = $this->pdo->prepare("UPDATE prelevements SET Sample = ?, Sea = ?, Date = ?, Start_Time = ?, Start_Latitude = ?, Start_Longitude = ?, Mid_Latitude = ?, Mid_Longitude = ?, End_Latitude = ?, End_Longitude = ?, Wind_force = ?, Wind_speed = ?, Wind_direction = ?, Sea_state = ?, Water_temperature = ?, Boat_speed = ?, Start_flowmeter = ?, End_flowmeter = ?, Filtered_volume = ?, Filtered_distance = ?, Filtered_surface = ?, Filtered_surface_km = ?, Particles_number = ?, Commentaires = ? WHERE Sample = ?");
-        $insert->execute(array($post["sample"], $post["sea"], $post["date"], $post["startTime"], $post["startLatitude"], $post["startLongitude"], $post["midLatitude"], $post["midLongitude"], $post["endLatitude"], $post["endLongitude"], $post["windForce"], $post["windSpeed"], $post["windDirection"], $post["seaState"], $post["waterTemperature"], $post["boatSpeed"], $post["startFlowMeter"], $post["endFlowMeter"], $post["filteredVolume"], $post["filteredDistance"], $post["filteredSurface"], $post["filteredSurfaceKm"], $post["particlesNumber"], $post["commentaires"], $id));
+        $post['concentration_km2'] = $post["particlesNumber"] / $post["filteredDistance"];
+        $post['concentration_m3'] = $post["particlesNumber"] / $post["filteredVolume"];
+        $insert = $this->pdo->prepare("UPDATE prelevements SET Sample = ?, Sea = ?, Date = ?, Start_Time = ?, Start_Latitude = ?, Start_Longitude = ?, Mid_Latitude = ?, Mid_Longitude = ?, End_Latitude = ?, End_Longitude = ?, Wind_force = ?, Wind_speed = ?, Wind_direction = ?, Sea_state = ?, Water_temperature = ?, Boat_speed = ?, Start_flowmeter = ?, End_flowmeter = ?, Filtered_volume = ?, Filtered_distance = ?, Filtered_surface = ?, Filtered_surface_km = ?, Particles_number = ?, Concentration_km2 = ?, Concentration_m3 = ?, Commentaires = ? WHERE Sample = ?");
+        $insert->execute(array($post["sample"], $post["sea"], $post["date"], $post["startTime"], $post["startLatitude"], $post["startLongitude"], $post["midLatitude"], $post["midLongitude"], $post["endLatitude"], $post["endLongitude"], $post["windForce"], $post["windSpeed"], $post["windDirection"], $post["seaState"], $post["waterTemperature"], $post["boatSpeed"], $post["startFlowMeter"], $post["endFlowMeter"], $post["filteredVolume"], $post["filteredDistance"], $post["filteredSurface"], $post["filteredSurfaceKm"], $post["particlesNumber"], $post['concentration_km2'], $post['concentration_m3'], $post["commentaires"], $id));
     }
 
     public function deleteBySample($id)
@@ -189,6 +191,12 @@ class DataRepository
     public function findAllSeas()
     {
         $select = $this->pdo->prepare("SELECT id_sea, name from mers");
+        $select->execute();
+        return $select->fetchAll();
+    }
+    public function findTypeByTri()
+    {
+        $select = $this->pdo->prepare("SELECT DISTINCT Type from tri");
         $select->execute();
         return $select->fetchAll();
     }

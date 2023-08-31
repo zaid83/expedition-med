@@ -6,13 +6,7 @@
     </div>
     <div class="mb-3 w-25 w-25">
         <label for="Sea" class="form-label">Mer</label>
-        <select name="sea" id="select-seas" class="select-seas form-control w-75">
-            <option value=""><?= $prelevement["Sea"] ?></option>
-            <?php foreach ($seas as $sea) : ?>
-                <option value="<?= $sea['id_sea'] ?>"><?= $sea['name'] ?></option>
-            <?php endforeach; ?>
-        </select>
-
+        <input type="text" class="form-control w-75" name="sea" id="seas" value="<?= $prelevement["Sea"] ?>">
     </div>
     <div class="mb-3 w-25 w-25">
         <label for="Date" class="form-label">Date</label>
@@ -93,6 +87,10 @@
     <div class="mb-3 w-25 w-25">
         <label for="FilteredSurfaceKm" class="form-label">Surface filtrée (KM)</label>
         <input type="text" class="form-control w-75" id="FilteredSurfaceKm" name="filteredSurfaceKm" value="<?= $prelevement["Filtered_surface_km"] ?>">
+    </div>
+    <div class="mb-3 w-25 w-25">
+        <label for="ParticlesNumber" class="form-label">Nombre de particules</label>
+        <input type="text" class="form-control w-75" id="ParticlesNumber" name="particlesNumber" placeholder="exemple:120">
     </div>
     <div class="mb-3 w-25 w-25 w-100">
         <label for="Commentaires" class="form-label">Commentaires</label>
