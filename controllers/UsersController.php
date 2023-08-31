@@ -61,7 +61,7 @@ class UsersController
 
             // when click on submit
             if (isset($_POST["submit"])) {
-                var_dump("pas d'erreur");
+
                 // VERIFICATIONS
                 $res = $this->user->check('email', $email);
 
@@ -83,12 +83,12 @@ class UsersController
 
                 // INSERT TO DB
                 else {
-                    var_dump("pas d'erreur");
+
 
                     $password = password_hash($_POST['password'], PASSWORD_DEFAULT);
                     $this->user->addUser($email, $password);
-                    var_dump('reussi');
-                    /* header("Location: /expedition-med/users/login"); */
+
+                    header("Location: /expedition-med/users/login");
                 }
             }
             $pageTitle = "Inscription";
