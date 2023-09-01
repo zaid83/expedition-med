@@ -183,16 +183,16 @@ var ligurianSea = L.polygon(ligurianSeaCoords, {
 }).addTo(map);
 ligurianSea.bindPopup("Mer Ligurienne");
 
-// Créer un polygone pour les Bouches de Bonifacio
-var bonifacioStrait = L.polygon(bonifacioStraitCoords, {
-  color: "orange",
-  fillOpacity: 0.4,
-}).addTo(map);
-bonifacioStrait.bindPopup("Bouches de Bonifacio");
-
 // Créer un polygone pour la Mer de Sardaigne
 var sardinianSea = L.polygon(sardinianSeaCoords, {
   color: "purple",
   fillOpacity: 0.4,
 }).addTo(map);
 sardinianSea.bindPopup("Mer de Sardaigne");
+
+// Créer un polygone pour les Bouches de Bonifacio
+var bonifacioStrait = L.polygon(bonifacioStraitCoords, {
+  color: "orange",
+  fillOpacity: 0.4,
+}).addTo(map);
+bonifacioStrait.bindPopup("Bouches de Bonifacio");
