@@ -139,6 +139,30 @@ var tyrrhenianSeaCoords = [
   [42, 10],
 ];
 
+// Coordonnées de la mer Ligure
+var ligurianSeaCoords = [
+  [43.5, 7.0],
+  [43.5, 9.5],
+  [44.0, 9.5],
+  [44.0, 7.0],
+];
+
+// Coordonnées des Bouches de Bonifacio
+var bonifacioStraitCoords = [
+  [41.4, 9.1],
+  [41.4, 9.5],
+  [41.8, 9.5],
+  [41.8, 9.1],
+];
+
+// Coordonnées de la Mer de Sardaigne
+var sardinianSeaCoords = [
+  [39.0, 7.0],
+  [39.0, 10.0],
+  [42.0, 10.0],
+  [42.0, 7.0],
+];
+
 // Créer des polygones pour chaque zone de découpe
 var mediterraneanSea = L.polygon(mediterraneanSeaCoords, {
   color: "blue",
@@ -151,3 +175,24 @@ var tyrrhenianSea = L.polygon(tyrrhenianSeaCoords, {
   fillOpacity: 0.4,
 }).addTo(map);
 tyrrhenianSea.bindPopup("Mer Tyrrhénienne");
+
+// Créer un polygone pour la mer Ligure
+var ligurianSea = L.polygon(ligurianSeaCoords, {
+  color: "red",
+  fillOpacity: 0.4,
+}).addTo(map);
+ligurianSea.bindPopup("Mer Ligurienne");
+
+// Créer un polygone pour les Bouches de Bonifacio
+var bonifacioStrait = L.polygon(bonifacioStraitCoords, {
+  color: "orange",
+  fillOpacity: 0.4,
+}).addTo(map);
+bonifacioStrait.bindPopup("Bouches de Bonifacio");
+
+// Créer un polygone pour la Mer de Sardaigne
+var sardinianSea = L.polygon(sardinianSeaCoords, {
+  color: "purple",
+  fillOpacity: 0.4,
+}).addTo(map);
+sardinianSea.bindPopup("Mer de Sardaigne");
