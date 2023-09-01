@@ -1,16 +1,19 @@
+// Création des icônes pour la carte
 var LeafIcon = L.Icon.extend({
   options: {
     iconSize: [38, 50],
+    // shadowSize: [50, 64],
+    // iconAnchor: [22, 94],
+    // shadowAnchor: [4, 62],
     popupAnchor: [-3, -40],
   },
 });
 
-// Définition des icônes
-var blackIcon = new LeafIcon({ iconUrl: "public/assets/icons/black.png" });
-var maroonIcon = new LeafIcon({ iconUrl: "public/assets/icons/maroon.png" });
-var redIcon = new LeafIcon({ iconUrl: "public/assets/icons/red.png" });
-var orangeIcon = new LeafIcon({ iconUrl: "public/assets/icons/orange.png" });
-var yellowIcon = new LeafIcon({ iconUrl: "public/assets/icons/yellow.png" });
+var blackIcon = new LeafIcon({ iconUrl: "public/assets/icons/black.png" }),
+  maroonIcon = new LeafIcon({ iconUrl: "public/assets/icons/maroon.png" }),
+  redIcon = new LeafIcon({ iconUrl: "public/assets/icons/red.png" }),
+  orangeIcon = new LeafIcon({ iconUrl: "public/assets/icons/orange.png" }),
+  yellowIcon = new LeafIcon({ iconUrl: "public/assets/icons/yellow.png" });
 
 // Conversion de la position en décimal
 function convertDMSToDecimal(degrees, minutes, seconds, direction) {
@@ -24,6 +27,102 @@ function convertDMSToDecimal(degrees, minutes, seconds, direction) {
 
   return decimalDegrees;
 }
+// Récupération des données de tri
+// function getTotal() {
+var totalPlastic = [];
+fetch("Data/plastiqueSum", {
+  method: "GET",
+  headers: { "Content-Type": "application/json" },
+})
+  .then(function (response) {
+    return response.json();
+  })
+  .then(function (response) {
+    response.forEach((element) => {
+      totalPlastic.push(element["total"]);
+    });
+    return totalPlastic;
+  });
+// }
+
+// Récupération des données de prélèvement
+fetch("Data/data", {
+  method: "GET",
+  headers: { "Content-Type": "application/json" },
+})
+  .then(function (response) {
+    return response.json();
+  })
+  .then(function (response) {
+    let i = 0;
+    response.forEach((element) => {
+      let latitude = element["Start_Latitude"];
+      latitude = latitude.split(/[^\d\w]+/);
+      let latitudeDecimal = convertDMSToDecimal(
+        parseInt(latitude[0]),
+        parseInt(latitude[1]),
+        parseInt(latitude[2]),
+        parseInt(latitude[3])
+      ).toFixed(2);
+      let longitude = element["Start_Longitude"];
+      longitude = longitude.split(/[^\d\w]+/);
+      let longitudeDecimal = convertDMSToDecimal(
+        parseInt(longitude[0]),
+        parseInt(longitude[1]),
+        parseInt(longitude[2]),
+        parseInt(longitude[3])
+      ).toFixed(2);
+      if (totalPlastic[i] > 500) {
+        var marker = L.marker([latitudeDecimal, longitudeDecimal], {
+          icon: blackIcon,
+        });
+      } else if (totalPlastic[i] >= 300 && totalPlastic[i] < 500) {
+        var marker = L.marker([latitudeDecimal, longitudeDecimal], {
+          icon: maroonIcon,
+        });
+      } else if (totalPlastic[i] >= 100 && totalPlastic[i] < 300) {
+        var marker = L.marker([latitudeDecimal, longitudeDecimal], {
+          icon: redIcon,
+        });
+      } else if (totalPlastic[i] >= 50 && totalPlastic[i] < 100) {
+        var marker = L.marker([latitudeDecimal, longitudeDecimal], {
+          icon: orangeIcon,
+        });
+      } else if (totalPlastic[i] >= 0 && totalPlastic[i] < 50) {
+        var marker = L.marker([latitudeDecimal, longitudeDecimal], {
+          icon: yellowIcon,
+        });
+      }
+      marker.addTo(map);
+      marker.bindPopup(`
+        <b>Echantillon : <a href="data/detailBySample/${element["Sample"]}">${element["Sample"]}</a></b>
+        <p><em>Microplastiques récoltés : ${totalPlastic[i]}</em></p>
+        <p>Mer : ${element["Sea"]}</p>
+        <p>Date : ${element["Date"]}</p>
+        <p>Concentration au km2 : ${element["Concentration_km2"]}</p>
+        <p>Concentration au m3 : ${element["Concentration_m3"]}</p>
+        `);
+      i++;
+    });
+  });
+
+const mediterranean = {
+  lat: 41,
+  lng: 9,
+};
+
+const zoomLevel = 6;
+
+var map = L.map("map").setView(
+  [mediterranean.lat, mediterranean.lng],
+  zoomLevel
+);
+
+L.tileLayer("https://tile.openstreetmap.org/{z}/{x}/{y}.png", {
+  maxZoom: 19,
+  attribution:
+    '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
+}).addTo(map);
 
 // Coordonnées des zones de découpe
 var mediterraneanSeaCoords = [
@@ -40,21 +139,6 @@ var tyrrhenianSeaCoords = [
   [42, 10],
 ];
 
-var adriaticSeaCoords = [
-  [38, 15],
-  [38, 20],
-  [42, 20],
-  [42, 15],
-];
-
-// Créer une carte
-var map = L.map("map").setView([39, 15], 5);
-
-// Ajouter une couche de carte OpenStreetMap
-L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-  attribution: "© OpenStreetMap contributors",
-}).addTo(map);
-
 // Créer des polygones pour chaque zone de découpe
 var mediterraneanSea = L.polygon(mediterraneanSeaCoords, {
   color: "blue",
@@ -67,33 +151,3 @@ var tyrrhenianSea = L.polygon(tyrrhenianSeaCoords, {
   fillOpacity: 0.4,
 }).addTo(map);
 tyrrhenianSea.bindPopup("Mer Tyrrhénienne");
-
-var adriaticSea = L.polygon(adriaticSeaCoords, {
-  color: "red",
-  fillOpacity: 0.4,
-}).addTo(map);
-adriaticSea.bindPopup("Mer Adriatique");
-
-// Récupération des données de tri
-fetch("Data/plastiqueSum", {
-  method: "GET",
-  headers: { "Content-Type": "application/json" },
-})
-  .then(function (response) {
-    return response.json();
-  })
-  .then(function (response) {
-    // Code de traitement des données de tri ici
-
-    // Récupération des données de prélèvement
-    fetch("Data/data", {
-      method: "GET",
-      headers: { "Content-Type": "application/json" },
-    })
-      .then(function (response) {
-        return response.json();
-      })
-      .then(function (response) {
-        // Code de traitement des données de prélèvement ici
-      });
-  });
