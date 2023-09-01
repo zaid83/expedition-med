@@ -26,6 +26,14 @@ class AdminController
         require_once "views/Layout.phtml";
     }
 
+    public function allYears()
+    {
+        $this->user->checkConnexion($_SESSION["id"]);
+        $prelevements = $this->data->findAll();
+        header('Content-Type: application/json');
+        echo json_encode($prelevements);
+    }
+
     public function viewBySample($id)
     {
         $this->user->checkConnexion($_SESSION["id"]);

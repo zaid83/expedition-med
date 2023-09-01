@@ -147,20 +147,20 @@ var ligurianSeaCoords = [
   [44.0, 7.0],
 ];
 
-// Coordonnées des Bouches de Bonifacio
-var bonifacioStraitCoords = [
-  [41.4, 9.1],
-  [41.4, 9.5],
-  [41.8, 9.5],
-  [41.8, 9.1],
-];
-
 // Coordonnées de la Mer de Sardaigne
 var sardinianSeaCoords = [
   [39.0, 7.0],
   [39.0, 10.0],
   [42.0, 10.0],
   [42.0, 7.0],
+];
+
+// Coordonnées des Bouches de Bonifacio
+var bonifacioStraitCoords = [
+  [41.4, 9.1],
+  [41.4, 9.5],
+  [41.8, 9.5],
+  [41.8, 9.1],
 ];
 
 // Créer des polygones pour chaque zone de découpe

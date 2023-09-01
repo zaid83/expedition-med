@@ -100,7 +100,7 @@ class UsersController
     public function loginPost()
     {
         $result = $this->user->find($_POST["email"]);
-        var_dump($result);
+
         $message = $this->user->checkPassword($_POST["password"], $result);
 
         if ($message) {

@@ -18,7 +18,30 @@ document.addEventListener("DOMContentLoaded", function () {
   // Écoutez le changement dans le menu déroulant et effectuez la requête AJAX
   selectYear.addEventListener("change", function () {
     const selectedYear = selectYear.value;
-    console.log(selectYear);
+    if (selectedYear === "all") {
+      fetch(`/expedition-med/admin/allYears/${selectedYear}`)
+        .then((response) => response.json())
+        .then((prelevements) => {
+          console.log(prelevements);
+          prelevementsTable.innerHTML = ""; // Réinitialiser le contenu de la table
+          prelevements.forEach((prelevement) => {
+            console.log(prelevements.Sea);
+            const row = document.createElement("tr");
+            row.innerHTML = `
+                         <td>${prelevement.Sample}</td>
+                         <td>${prelevement.Sea}</td>
+                         <td>${prelevement.Date}</td>
+                         <td><a href="admin/triBySample/${prelevement.Sample}">Tris associés</a></td>
+                         <td><a href="admin/viewBySample/${prelevement.Sample}">Voir</a></td>
+                         <td><a href="admin/editBySample/${prelevement.Sample}">Modifier</a></td>
+                         <td><a href="admin/deleteBySample/${prelevement.Sample}" onclick="return confirm('Confirmer la suppression de ce prélèvement');">Supprimer</a></td>
+                     `;
+            prelevementsTable.appendChild(row);
+          });
+        })
+        .catch((error) => console.error(error));
+    }
+
     // Effectuer la requête AJAX pour récupérer les prélevements par année
     fetch(`/expedition-med/admin/samplesByYear/${selectedYear}`)
       .then((response) => response.json())
@@ -42,5 +65,5 @@ document.addEventListener("DOMContentLoaded", function () {
       })
       .catch((error) => console.error(error));
   });
-  // Votre code AJAX pour récupérer les prélevements en fonction de l'année sélectionnée
 });
+// Votre code AJAX pour récupérer les prélevements en fonction de l'année sélectionnée
