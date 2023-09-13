@@ -26,6 +26,15 @@ class AdminController
         require_once "views/Layout.phtml";
     }
 
+    public function importExcel()
+    {
+        $this->user->checkConnexion($_SESSION["id"]);
+        $pageTitle = "Import Csv";
+        $page = "views/AdminImport.phtml";
+        require_once "views/Layout.phtml";
+    }
+
+
     public function allYears()
     {
         $this->user->checkConnexion($_SESSION["id"]);

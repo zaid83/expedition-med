@@ -8,6 +8,7 @@ class Autoloader
             if (file_exists($classname . ".php")) {
                 require $classname . ".php";
             } else {
+                var_dump($classname);
                 echo "erreur 404";
                 exit();
             }

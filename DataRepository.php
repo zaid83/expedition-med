@@ -1,12 +1,11 @@
 <?php
 
+
 namespace models;
-
 require 'vendor/autoload.php';
-
 use PDO;
 use PhpOffice\PhpSpreadsheet\IOFactory;
-use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 
 class DataRepository
 {
@@ -18,7 +17,6 @@ class DataRepository
         $this->pdo = \config\Database::getpdo();
     }
 
-    // Fonction pour valider les données du formulaire de prélèvement
     public function validationPrelevement($data)
     {
         $requiredFields = ['sample', 'sea', 'date', 'startTime', 'startLatitude', 'startLongitude'];
@@ -33,7 +31,6 @@ class DataRepository
         return true;
     }
 
-    // Fonction pour traiter le formulaire de prélèvement
     public function formulairePrelevement()
     {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -41,21 +38,17 @@ class DataRepository
 
             if ($this->validationPrelevement($data)) {
                 // Les champs du formulaire sont valides, vous pouvez effectuer les actions nécessaires
-                $data['concentration_km2'] = $data["particlesNumber"] / $data["filteredDistance"];
-                $data['concentration_m3'] = $data["particlesNumber"] / $data["filteredVolume"];
+
                 // Insérer les données dans la table "prelevements"
-                $insert = $this->pdo->prepare("INSERT INTO prelevements (Sample, Sea, Date, Start_Time, Start_Latitude, Start_Longitude, Mid_Latitude, Mid_Longitude, End_Latitude, End_Longitude, Wind_force, Wind_speed, Wind_direction, Sea_state, Water_temperature, Boat_speed, Start_flowmeter, End_flowmeter, Filtered_volume, Filtered_distance, Filtered_surface, Filtered_surface_km, Particles_number, Concentration_km2, Concentration_m3, Commentaires) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
+                $insert = $this->pdo->prepare("INSERT INTO prelevements (Sample, Sea, Date, Start_Time, Start_Latitude, Start_Longitude, Mid_Latitude, Mid_Longitude, End_Latitude, End_Longitude, Wind_force, Wind_speed, Wind_direction, Sea_state, Water_temperature, Boat_speed, Start_flowmeter, End_flowmeter, Filtered_volume, Filtered_distance, Filtered_surface, Filtered_surface_km, Commentaires) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)");
 
-                $insert->execute(array(
-                    $data["sample"], $data["sea"], $data["date"], $data["startTime"], $data["startLatitude"], $data["startLongitude"], $data["midLatitude"], $data["midLongitude"], $data["endLatitude"], $data["endLongitude"], $data["windForce"], $data["windSpeed"], $data["windDirection"], $data["seaState"], $data["waterTemperature"], $data["boatSpeed"], $data["startFlowMeter"], $data["endFlowMeter"], $data["filteredVolume"], $data["filteredDistance"], $data["filteredSurface"], $data["filteredSurfaceKm"], $data["particlesNumber"], $data['concentration_km2'], $data['concentration_m3'], $data["commentaires"]
-                ));
+                $insert->execute(array($data["sample"], $data["sea"], $data["date"], $data["startTime"], $data["startLatitude"], $data["startLongitude"], $data["midLatitude"], $data["midLongitude"], $data["endLatitude"], $data["endLongitude"], $data["windForce"], $data["windSpeed"], $data["windDirection"], $data["seaState"], $data["waterTemperature"], $data["boatSpeed"], $data["startFlowMeter"], $data["endFlowMeter"], $data["filteredVolume"], $data["filteredDistance"], $data["filteredSurface"], $data["filteredSurfaceKm"], $data["commentaires"]));
 
-                // Après l'insertion, vous pouvez effectuer d'autres actions si nécessaire
+                // apres insertion ?
+
             }
         }
     }
-
-    // Fonction pour trouver tous les prélèvements
     public function findAll()
     {
         $select = $this->pdo->prepare("SELECT * FROM prelevements");
@@ -64,7 +57,6 @@ class DataRepository
         return $select->fetchAll();
     }
 
-    // Fonction pour trouver tous les prélèvements d'un échantillon spécifique
     public function findAllBySample($id)
     {
         $select = $this->pdo->prepare("SELECT * FROM prelevements WHERE Sample = ?");
@@ -73,28 +65,17 @@ class DataRepository
         return $select->fetch();
     }
 
-    // Fonction pour éditer un prélèvement par échantillon
     public function editBySample($id, $post)
     {
-        $post['concentration_km2'] = $post["particlesNumber"] / $post["filteredDistance"];
-        $post['concentration_m3'] = $post["particlesNumber"] / $post["filteredVolume"];
-        $insert = $this->pdo->prepare("UPDATE prelevements SET Sample = ?, Sea = ?, Date = ?, Start_Time = ?, Start_Latitude = ?, Start_Longitude = ?, Mid_Latitude = ?, Mid_Longitude = ?, End_Latitude = ?, End_Longitude = ?, Wind_force = ?, Wind_speed = ?, Wind_direction = ?, Sea_state = ?, Water_temperature = ?, Boat_speed = ?, Start_flowmeter = ?, End_flowmeter = ?, Filtered_volume = ?, Filtered_distance = ?, Filtered_surface = ?, Filtered_surface_km = ?, Particles_number = ?, Concentration_km2 = ?, Concentration_m3 = ?, Commentaires = ? WHERE Sample = ?");
-        $insert->execute(array(
-            $post["sample"], $post["sea"], $post["date"], $post["startTime"], $post["startLatitude"], $post["startLongitude"], $post["midLatitude"], $post["midLongitude"], $post["endLatitude"], $post["endLongitude"], $post["windForce"], $post["windSpeed"], $post["windDirection"], $post["seaState"], $post["waterTemperature"], $post["boatSpeed"], $post["startFlowMeter"], $post["endFlowMeter"], $post["filteredVolume"], $post["filteredDistance"], $post["filteredSurface"], $post["filteredSurfaceKm"], $post["particlesNumber"], $post['concentration_km2'], $post['concentration_m3'], $post["commentaires"], $id
-        ));
+        $insert = $this->pdo->prepare("UPDATE prelevements SET Sample = ?, Sea = ?, Date = ?, Start_Time = ?, Start_Latitude = ?, Start_Longitude = ?, Mid_Latitude = ?, Mid_Longitude = ?, End_Latitude = ?, End_Longitude = ?, Wind_force = ?, Wind_speed = ?, Wind_direction = ?, Sea_state = ?, Water_temperature = ?, Boat_speed = ?, Start_flowmeter = ?, End_flowmeter = ?, Filtered_volume = ?, Filtered_distance = ?, Filtered_surface = ?, Filtered_surface_km = ?, Commentaires = ? WHERE Sample = ?");
+        $insert->execute(array($post["sample"], $post["sea"], $post["date"], $post["startTime"], $post["startLatitude"], $post["startLongitude"], $post["midLatitude"], $post["midLongitude"], $post["endLatitude"], $post["endLongitude"], $post["windForce"], $post["windSpeed"], $post["windDirection"], $post["seaState"], $post["waterTemperature"], $post["boatSpeed"], $post["startFlowMeter"], $post["endFlowMeter"], $post["filteredVolume"], $post["filteredDistance"], $post["filteredSurface"], $post["filteredSurfaceKm"], $post["commentaires"], $id));
     }
 
-    // Fonction pour supprimer un prélèvement par échantillon
     public function deleteBySample($id)
     {
         $delete = $this->pdo->prepare("DELETE FROM prelevements WHERE Sample = ?");
         $delete->execute(array($id));
     }
-
-
-    // ...
-
-    // Fonction pour trouver tous les échantillons
     public function findAllSample()
     {
         $select = $this->pdo->prepare("SELECT Sample FROM prelevements");
@@ -102,11 +83,8 @@ class DataRepository
 
         return $select->fetchAll();
     }
-
-    // Fonction pour créer un tableau de données pour le tri
     public function tableTri($post)
     {
-        $tableau = array();
         for ($i = 1; $i <= count($post) / 5; $i++) {
             $sous_tableau = array(
                 "sample" => $post["sample_" . $i],
@@ -120,7 +98,6 @@ class DataRepository
         return $tableau;
     }
 
-    // Fonction pour récupérer les données de tri pour un échantillon spécifique
     public function triBySample($id)
     {
         $select = $this->pdo->prepare("SELECT * FROM tri WHERE Sample = ?");
@@ -128,8 +105,6 @@ class DataRepository
 
         return $select->fetchAll();
     }
-
-    // Fonction pour trouver tous les enregistrements de tri
     public function findAllTri()
     {
         $select = $this->pdo->prepare("SELECT * FROM tri");
@@ -138,7 +113,6 @@ class DataRepository
         return $select->fetchAll();
     }
 
-    // Fonction pour trouver un enregistrement de tri par son ID
     public function findByTri($id)
     {
         $select = $this->pdo->prepare("SELECT * FROM tri WHERE id = ?");
@@ -147,66 +121,50 @@ class DataRepository
         return $select->fetch();
     }
 
-    // Fonction pour éditer un enregistrement de tri
     public function editByTri($id, $post)
     {
         $insert = $this->pdo->prepare("UPDATE tri SET Sample = ?, Size = ?, Type = ?, Color = ?, Number = ? WHERE id = ?");
-        $insert->execute(array(
-            $post["sample"], $post["size"], $post["type"], $post["color"], $post["number"], $id
-        ));
+        $insert->execute(array($post["sample"], $post["size"], $post["type"], $post["color"], $post["number"], $id));
     }
 
-    // Fonction pour supprimer un enregistrement de tri
     public function deleteByTri($id)
     {
         $delete = $this->pdo->prepare("DELETE FROM tri WHERE id = ?");
         $delete->execute(array($id));
     }
-
-    // Fonction pour ajouter un enregistrement de tri
     public function addTri($sample, $size, $type, $color, $number)
     {
-        $add = $this->pdo->prepare("INSERT INTO tri (Sample, Size, Type, Color, Number) VALUES (?, ?, ?, ?, ?)");
+        $add = $this->pdo->prepare("INSERT INTO tri (Sample, Size, Type, Color, Number) VALUES (?,?,?,?,?)");
         $add->execute(array($sample, $size, $type, $color, $number));
     }
-
-    // Fonction pour obtenir la somme du nombre de tri par échantillon
     public function numberBySample()
     {
-        $select = $this->pdo->prepare('SELECT SUM(Number) AS "total", Sample FROM tri GROUP BY Sample');
+        $select = $this->pdo->prepare('select SUM(Number) as "total", Sample FROM tri GROUP BY Sample');
         $select->execute();
 
         return $select->fetchAll();
     }
-
-    // Fonction pour trouver le type de tri par échantillon
     public function findTypeBySample($id)
     {
-        $select = $this->pdo->prepare('SELECT Type, SUM(Number) AS "total" FROM tri WHERE Sample = ? GROUP BY Type');
+        $select = $this->pdo->prepare('select Type, SUM(number) as "total" from tri where sample = ? group by Type');
         $select->execute(array($id));
 
         return $select->fetchAll();
     }
-
-    // Fonction pour trouver la couleur de tri par échantillon
     public function findColorBySample($id)
     {
-        $select = $this->pdo->prepare('SELECT Color, SUM(Number) AS "total" FROM tri WHERE Sample = ? GROUP BY Color');
+        $select = $this->pdo->prepare('select Color, SUM(number) as "total" from tri where sample = ? group by Color');
         $select->execute(array($id));
 
         return $select->fetchAll();
     }
-
-    // Fonction pour trouver la taille de tri par échantillon
     public function findSizeBySample($id)
     {
-        $select = $this->pdo->prepare('SELECT Size, SUM(Number) AS "total" FROM tri WHERE Sample = ? GROUP BY Size');
+        $select = $this->pdo->prepare('select Size, SUM(number) as "total" from tri where sample = ? group by Size');
         $select->execute(array($id));
 
         return $select->fetchAll();
     }
-
-    // Fonction pour trouver les détails d'un échantillon par ID
     public function findDetailBySample($id)
     {
         $select = $this->pdo->prepare('SELECT Water_temperature, Filtered_volume, Commentaires, Sea_state, Start_time, Wind_force FROM prelevements WHERE Sample = ?');
@@ -215,121 +173,67 @@ class DataRepository
         return $select->fetch();
     }
 
+  
 
-
-    // ...
-
-    // Fonction pour trouver les échantillons par année
-    public function findSamplesByYear($year)
-    {
-        $select = $this->pdo->prepare("SELECT * FROM prelevements WHERE SUBSTRING(date, -4) = ?");
-        $select->execute(array($year));
-
-        return $select->fetchAll();
-    }
-
-    // Fonction pour trouver les années uniques
-    public function findUniqueYears()
-    {
-        $select = $this->pdo->query("SELECT DISTINCT SUBSTRING(date, -4) FROM prelevements ");
-        return $select->fetchAll(PDO::FETCH_COLUMN);
-    }
-
-    // Fonction pour trouver toutes les mers
-    public function findAllSeas()
-    {
-        $select = $this->pdo->prepare("SELECT id_sea, name FROM mers");
-        $select->execute();
-        return $select->fetchAll();
-    }
-
-    // Fonction pour trouver les types de tri
-    public function findTypeByTri()
-    {
-        $select = $this->pdo->prepare("SELECT DISTINCT Type FROM tri");
-        $select->execute();
-        return $select->fetchAll();
-    }
-
-    // Fonction pour trouver les tailles de tri
-    public function findSizeByTri()
-    {
-        $select = $this->pdo->prepare("SELECT DISTINCT Size FROM tri");
-        $select->execute();
-        return $select->fetchAll();
-    }
-
-    // Fonction pour trouver les couleurs de tri
-    public function findColorByTri()
-    {
-        $select = $this->pdo->prepare("SELECT DISTINCT Color FROM tri");
-        $select->execute();
-        return $select->fetchAll();
-    }
-
-    // Fonction pour importer un fichier CSV (échantillons)
-    public function importCSV($filename)
-    {
+    public function importCSV($filename) {
         try {
             $spreadsheet = IOFactory::load($filename);
             $worksheet = $spreadsheet->getActiveSheet();
-
+        
             $data = [];
             $firstRowSkipped = false; // Variable pour suivre si la première ligne a été sautée
-
+        
             foreach ($worksheet->getRowIterator() as $row) {
                 if (!$firstRowSkipped) {
                     $firstRowSkipped = true;
                     continue; // Sauter la première ligne
                 }
-
+                
                 $rowData = [];
                 foreach ($row->getCellIterator() as $cell) {
                     $rowData[] = $cell->getValue();
                 }
                 $data[] = $rowData;
             }
-
+        
             // Renvoie le tableau des données extraites
             return $data;
         } catch (\Exception $e) {
             echo "<script type=\"text/javascript\">
-                alert(\"Error: {$e->getMessage()}\")
-              </script>";
+                    alert(\"Error: {$e->getMessage()}\")
+                  </script>";
             return []; // Retourne un tableau vide en cas d'erreur
         }
     }
 
-    // Fonction pour insérer des données (échantillons) dans la base de données
-    public function insertData($data)
-    {
-        $sample = $data[1];
-        $size = $data[2];
+    public function insertData($data) {
+        
+        $sample = $data[1]; 
+        $size = $data[2]; 
         $type = $data[3];
-        $color = $data[4];
-        $number = $data[5];
+        $color = $data[4]; 
+        $number = $data[5]; 
 
         $insert = $this->pdo->prepare('INSERT INTO tri (Sample, Size, Type, Color, Number) VALUES (?, ?, ?, ?, ?)');
         $result = $insert->execute([$sample, $size, $type, $color, $number]);
 
         if (!$result) {
             echo "<script type=\"text/javascript\">
-                alert(\"Database Error: Unable to Insert Data.\");
-              </script>";
+                    alert(\"Database Error: Unable to Insert Data.\");
+                  </script>";
         }
     }
 
-    public function insertDataPrelevement($data)
-    {
+    public function insertDataPrelevement($data) {
         $Echantillon = $data[0];
         $Campagne = $data[1];
         $Mer = $data[2];
         $Manta = $data[3];
         $dateAuFormatJJMMAAAA = $data[4];
-        // Convertir en format "aaaa/mm/jj"
-        $Date = \DateTime::createFromFormat('d.m.Y', $dateAuFormatJJMMAAAA)->format('Y-m-d');
+// Convertir en format "aaaa/mm/jj"
+$Date = \DateTime::createFromFormat('d.m.Y', $dateAuFormatJJMMAAAA)->format('Y-m-d');
 
-
+        
         $Trafic = $data[5];
         $CoteLaPlusProche = $data[6];
         $Courant = $data[7];
@@ -354,16 +258,16 @@ class DataRepository
         $End_Flowmeter = $data[26];
         $Volume_Filtered_m3 = ($data[26] - $data[25]) * 0.3 * 0.2;
         $Volume_Filtered_Corrected_m3 = ($data[26] - $data[25]) * 0.3 * 0.1;
-        $km2 = $data[16] * 1.852 * 0.3333 * (60 * 1e-5);
+        $km2 = $data[16]* 1.852 * 0.3333 * (60 * 1e-5);
         $Commentaires = $data[30];
         $Nombre_Particules_gt_1_mm = $data[31];
         $Concentration_nb_km2 = $data[31] / $km2;
         $Concentration_nb_m3 = $data[31] / $Volume_Filtered_Corrected_m3;
         var_dump($Date);
-
+    
         $insert = $this->pdo->prepare("INSERT INTO donneesocean (Echantillon, Campagne, Mer, Manta, Date, Trafic, cote_la_plus_proche, courant, Start_Time_UTC, End_Time_UTC, Start_Latitude, Start_Longitude, Mid_Latitude, Mid_Longitude, End_Latitude, End_Longitude, Boat_Speed_kt, Wind_Force_B, Wind_Speed_kt, Wind_Direction_deg, Sea_State_B, Temperature_C, pH, Oxygene_Dissous_mg_L, Salinite_SAL_PSU, Start_Flowmeter, End_Flowmeter, Volume_Filtered_m3, Volume_Filtered_Corrected_m3, km2, Commentaires, Nombre_Particules_gt_1_mm, Concentration_nb_km2, Concentration_nb_m3) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)");
         $result = $insert->execute([$Echantillon, $Campagne, $Mer, $Manta, $Date, $Trafic, $CoteLaPlusProche, $Courant, $Start_Time_UTC, $End_Time_UTC, $Start_Latitude, $Start_Longitude, $Mid_Latitude, $Mid_Longitude, $End_Latitude, $End_Longitude, $Boat_Speed_kt, $Wind_Force_B, $Wind_Speed_kt, $Wind_Direction_deg, $Sea_State_B, $Temperature_C, $pH, $Oxygene_Dissous_mg_L, $Salinite_SAL_PSU, $Start_Flowmeter, $End_Flowmeter, $Volume_Filtered_m3, $Volume_Filtered_Corrected_m3, $km2, $Commentaires, $Nombre_Particules_gt_1_mm, $Concentration_nb_km2, $Concentration_nb_m3]);
-
+    
         if (!$result) {
             echo "<script type=\"text/javascript\">
                     alert(\"Database Error: Unable to Insert Data.\");
@@ -371,42 +275,44 @@ class DataRepository
         }
     }
 
-    // Fonction pour importer un fichier CSV (prélèvements)
-    public function importCSVSampling($filename)
-    {
+    public function importCSVSampling($filename) {
         try {
             $spreadsheet = IOFactory::load($filename);
             $worksheet = $spreadsheet->getActiveSheet();
-
+    
             $data = [];
             $firstRowSkipped = false; // Variable pour suivre si la première ligne a été sautée
             $secondRowSkipped = false; // Variable pour suivre si la deuxième ligne a été sautée
-
+    
             foreach ($worksheet->getRowIterator() as $row) {
                 if (!$firstRowSkipped) {
                     $firstRowSkipped = true;
                     continue; // Sauter la première ligne
                 }
-
+                
                 if (!$secondRowSkipped) {
                     $secondRowSkipped = true;
                     continue; // Sauter la deuxième ligne
                 }
-
+                
                 $rowData = [];
                 foreach ($row->getCellIterator() as $cell) {
                     $rowData[] = $cell->getValue();
                 }
                 $data[] = $rowData;
             }
-
+    
             // Renvoie le tableau des données extraites
             return $data;
         } catch (\Exception $e) {
             echo "<script type=\"text/javascript\">
-                alert(\"Error: {$e->getMessage()}\")
-              </script>";
+                    alert(\"Error: {$e->getMessage()}\")
+                  </script>";
             return []; // Retourne un tableau vide en cas d'erreur
         }
     }
+    
+
+
+   
 }

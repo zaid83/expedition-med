@@ -31,6 +31,7 @@ class UsersRepository
     {
         if (password_verify($password, $result["password"])) {
             $_SESSION["id"] = $result["id"];
+            var_dump($_SESSION);
             return true;
         } else {
             return false;

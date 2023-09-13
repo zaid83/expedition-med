@@ -26,6 +26,7 @@ class Routing
                     $controller->$methodName();
                 }
             } else {
+                var_dump($url);
                 echo "erreur 404";
             }
         } else {

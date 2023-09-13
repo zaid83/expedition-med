@@ -20,7 +20,6 @@ class DataController
   public function sampling()
   {
     $this->user->checkConnexion($_SESSION["id"]);
-    $seas = $this->data->findAllSeas();
     $pageTitle = "Sampling";
     $page = "views/AddSampling.phtml";
     require_once "views/Layout.phtml";
@@ -41,13 +40,8 @@ class DataController
   public function select()
   {
     $this->user->checkConnexion($_SESSION["id"]);
-
-    $data = array();
-    $data['samples'] = $this->data->findAllSample();
-    $data['type'] = $this->data->findTypeByTri();
-    $data['size'] = $this->data->findSizeByTri();
-    $data['color'] = $this->data->findColorByTri();
-    echo json_encode($data);
+    $result = $this->data->findAllSample();
+    echo json_encode($result);
   }
   public function triPost()
   {
@@ -68,9 +62,6 @@ class DataController
     $this->data->formulairePrelevement();
     return header('Location: /expedition-med/Data/tri');
   }
-
-
-
   public function detailBySample($id)
   {
     $resultT = $this->data->findTypeBySample($id);
@@ -82,40 +73,40 @@ class DataController
     require_once "views/Layout.phtml";
   }
 
-  public function import()
-  {
+  public function import() {
     if (isset($_POST["Import"])) {
-      $csvImporter = new \models\DataRepository();
-      $filename = $_FILES["file"]["tmp_name"];
-      $data = $csvImporter->importCSV($filename); // les données du fichier Excel
+         $csvImporter = new \models\DataRepository();
+         $filename = $_FILES["file"]["tmp_name"];
+         $data = $csvImporter->importCSV($filename); // les données du fichier Excel
+ 
+         foreach ($data as $row) {
+             
 
-      foreach ($data as $row) {
-
-
-        $csvImporter->insertData($row); // Appel de la méthode insertData
-      }
-      var_dump($data);
-      $page = "views/AdminImport.phtml";
-      require_once "views/Layout.phtml";
+             $csvImporter->insertData($row); // Appel de la méthode insertData
+         }
+ 
+         $page = "views/AddTri.phtml";
+         require_once "views/Layout.phtml";
     }
+ }
+
+ 
+    public function importSampling() {
+  if (isset($_POST["Import"])) {
+       $csvImporter = new \models\DataRepository();
+       $filename = $_FILES["file"]["tmp_name"];
+       $data = $csvImporter->importCSVSampling($filename); // les données du fichier Excel
+
+       foreach ($data as $row) {
+           
+
+           $csvImporter->insertDataPrelevement($row); // Appel de la méthode insertData
+       }
+
+       $page = "views/AddTri.phtml";
+       require_once "views/Layout.phtml";
   }
+}
 
-
-  public function importSampling()
-  {
-    if (isset($_POST["Import"])) {
-      $csvImporter = new \models\DataRepository();
-      $filename = $_FILES["file"]["tmp_name"];
-      $data = $csvImporter->importCSVSampling($filename); // les données du fichier Excel
-
-      foreach ($data as $row) {
-
-
-        $csvImporter->insertDataPrelevement($row); // Appel de la méthode insertData
-      }
-
-      $page = "views/AdminImport.phtml";
-      require_once "views/Layout.phtml";
-    }
-  }
+ 
 }
